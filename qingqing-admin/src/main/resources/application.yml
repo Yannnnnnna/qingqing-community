@@ -1,0 +1,60 @@
+qingqing:
+  jwt:
+    # 设置jwt签名加密时使用的秘钥
+    admin-secret-key: itcast
+    # 设置jwt过期时间
+    admin-ttl: 7200000
+    # 设置前端传递过来的令牌名称
+    admin-token-name: token
+spring:
+  datasource:
+    # 数据库连接 URL
+    url: jdbc:mysql://localhost:3306/service_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    # 数据库用户名
+    username: root
+    # 数据库密码
+    password: root
+    # 数据库驱动
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 使用 Druid 连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+
+
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml # Mybatis-Plus Mapper XML 文件位置
+  global-config:
+    db-config:
+      id-type: auto # 主键生成策略
+      logic-delete-field: deleted # 逻辑删除字段
+      logic-delete-value: 1 # 逻辑删除值
+      logic-not-delete-value: 0 # 逻辑未删除值
+  configuration:
+    map-underscore-to-camel-case: true # 开启驼峰命名转换
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印 SQL 日志 (开发环境建议开启，生产环境慎用)
+
+# Druid 连接池配置 (可选，根据需求调整)
+druid:
+  stat-view-servlet:
+    enabled: true
+    url-pattern: /druid/*
+    reset-enable: true
+    login-username: admin
+    login-password: 123
+  web-stat-filter:
+    enabled: true
+    url-pattern: /*
+    exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+knife4j:
+  enable: true # 启用 Knife4j
+  setting:
+    language: zh-CN # 设置为中文
+    enable-swagger-manage: true
+  openapi:
+    title: 青青校园社区系统 - 后台管理API # API 文档标题
+    description: 青青校园社区系统后台管理模块的API文档
+    version: 1.0 # API 版本
+    group:
+      default:
+        group-name: 默认 # 默认分组名称
+        api-base-package: com.qingqing.admin.controller # 指定要扫描的 Controller 包路径 (根据实际模块调整)
+
