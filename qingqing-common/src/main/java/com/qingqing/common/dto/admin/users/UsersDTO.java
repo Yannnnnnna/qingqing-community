@@ -23,13 +23,13 @@ public class UsersDTO {
      * 微信OpenID
      */
     @ApiModelProperty(value = "微信OpenID", example = "wx_open_id")
-    private String openId;
+    private String openid;
 
     /**
      * 用户名
      */
     @ApiModelProperty(value = "昵称", example = "aaa")
-    private String nickName;
+    private String nickname;
 
     /**
      * 手机号

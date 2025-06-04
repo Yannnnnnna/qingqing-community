@@ -49,6 +49,7 @@ public class User implements Serializable {
 
     @ApiModelProperty(value = "更新时间")
     private LocalDateTime updateTime;
-
+    @ApiModelProperty(value = "地址")
+    private String address;
 
 }
