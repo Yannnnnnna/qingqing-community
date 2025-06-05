@@ -47,6 +47,9 @@ public class GoodsDTO {
     @JsonIgnore // 不在API文档中显示
     private String images; // 存储JSON字符串
 
+    @ApiModelProperty(value = "商品描述", example = "这是一本很好的Java编程书籍")
+    private String description; // 商品描述
+
     // API传输字段（URL列表）
     @ApiModelProperty(value = "商品图片URL列表", example = "[\"https://example.com/goods1.jpg\", \"https://example.com/goods2.jpg\"]")
     private List<String> imageUrls; // 图片URL列表

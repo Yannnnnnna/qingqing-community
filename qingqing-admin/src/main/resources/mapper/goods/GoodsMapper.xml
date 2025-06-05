@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingqing.admin.mapper.GoodsMapper">
+
+    <resultMap id="GoodsPageDTOMap" type="com.qingqing.common.dto.admin.goods.GoodsPageDTO">
+        <id column="g_id" property="id"/>
+        <result column="u_name" property="publisherName"/>
+        <result column="c_name" property="categoryName"/>
+        <result column="g_title" property="title"/>
+        <result column="g_price" property="price"/>
+        <result column="g_status" property="status"/>
+        <result column="g_create_time" property="createTime"/>
+    </resultMap>
+
+    <select id="selectGoodsPage" resultMap="GoodsPageDTOMap">
+        SELECT
+        g.id AS g_id,
+        u.nickname AS u_name,
+        c.name AS c_name,
+        g.title AS g_title,
+        g.price AS g_price,
+        g.status AS g_status,
+        g.create_time AS g_create_time
+        FROM
+        goods g
+        LEFT JOIN
+        user u ON g.user_id = u.id
+        LEFT JOIN
+        category c ON g.category_id = c.id
+        <where>
+            <if test="publisherName != null and publisherName != ''">
+                AND u.nickname LIKE CONCAT('%', #{publisherName}, '%')
+            </if>
+            <if test="categoryName != null and categoryName != ''">
+                AND c.name LIKE CONCAT('%', #{categoryName}, '%')
+            </if>
+            <if test="title != null and title != ''">
+                AND g.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="status != null">
+                AND g.status = #{status}
+            </if>
+        </where>
+        ORDER BY g.create_time DESC
+    </select>
+
+</mapper>
