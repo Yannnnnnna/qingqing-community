@@ -1,0 +1,34 @@
+package com.qingqing.common.dto.user;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotNull;
+
+/**
+ * 图片消息发送DTO
+ */
+@Data
+@ApiModel("图片消息发送DTO")
+public class ImageSendDTO {
+
+    @ApiModelProperty("商品ID")
+    @NotNull(message = "商品ID不能为空")
+    private Long goodsId;
+
+    @ApiModelProperty("发送者ID")
+    @NotNull(message = "发送者ID不能为空")
+    private Long senderId;
+
+    @ApiModelProperty("接收者ID")
+    @NotNull(message = "接收者ID不能为空")
+    private Long receiverId;
+
+    @ApiModelProperty("图片文件（用于直接上传）")
+    private MultipartFile file;
+
+    @ApiModelProperty("图片URL（用于已上传的图片）")
+    private String imageUrl;
+}

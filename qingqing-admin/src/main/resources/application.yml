@@ -1,7 +1,7 @@
 qingqing:
   jwt:
     # 设置jwt签名加密时使用的秘钥
-    admin-secret-key: itcast
+    admin-secret-key: qingqing_admin_secret_2025_key # 使用管理员密钥
     # 设置jwt过期时间
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
@@ -18,7 +18,23 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 使用 Druid 连接池
     type: com.alibaba.druid.pool.DruidDataSource
-
+# qingqing-admin/src/main/resources/application.yml
+  servlet:
+    multipart:
+      max-file-size: 10MB       # 单个文件最大值
+      max-request-size: 100MB   # 单次请求最大值
+    web:
+      resources:
+        # 静态资源映射：将 /imgs/ 开头的请求映射到 G:/qingqing-community-imgs/
+        # 注意：classpath:/static/ 仍然保留，用于访问你项目内部的静态资源
+        static-locations: "classpath:/static/,file:G:/qingqing-community-imgs/"
+    app:
+      upload:
+        # 统一的本地存储路径，直接指向 G:\qingqing-community-imgs
+        base-path: "G:/qingqing-community-imgs/"
+        # 图片的Web访问前缀，前端将通过这个前缀拼接文件名来访问图片
+        # 建议统一一个前缀，例如 /imgs/，方便管理
+        web-prefix: "/imgs/"
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml # Mybatis-Plus Mapper XML 文件位置
@@ -57,4 +73,5 @@ knife4j:
       default:
         group-name: 默认 # 默认分组名称
         api-base-package: com.qingqing.admin.controller # 指定要扫描的 Controller 包路径 (根据实际模块调整)
-
+server:
+  port: 8888

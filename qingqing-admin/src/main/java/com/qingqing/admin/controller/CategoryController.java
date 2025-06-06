@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2025-05-28
  */
 @RestController
-@RequestMapping("/category")
+@RequestMapping("/admin/category")
 @Api(tags = "商品类别管理")
 public class CategoryController {
     @Autowired

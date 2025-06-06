@@ -51,5 +51,7 @@ public class User implements Serializable {
     private LocalDateTime updateTime;
     @ApiModelProperty(value = "地址")
     private String address;
+    @ApiModelProperty(value = "密码")
+    private String  password;
 
 }

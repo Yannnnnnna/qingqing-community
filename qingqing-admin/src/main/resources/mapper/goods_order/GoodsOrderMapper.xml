@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qingqing.admin.mapper.GoodsOrderMapper">
+
+    <resultMap id="GoodsOrderPageDTOMap" type="com.qingqing.common.dto.admin.goods_order.GoodsOrderPageDTO">
+        <id column="go_id" property="id"/>
+        <result column="g_title" property="goodsName"/>
+        <result column="b_nickname" property="buyerName"/>
+        <result column="s_nickname" property="sellerName"/>
+        <result column="go_price" property="price"/>
+        <result column="go_status" property="status"/>
+        <result column="go_create_time" property="dealTime"/>
+    </resultMap>
+
+    <select id="selectGoodsOrderPage" resultMap="GoodsOrderPageDTOMap">
+        SELECT
+        go.id AS go_id,
+        g.title AS g_title,
+        b.nickname AS b_nickname,
+        s.nickname AS s_nickname,
+        go.price AS go_price,
+        go.status AS go_status,
+        go.create_time AS go_create_time
+        FROM
+        goods_order go
+        LEFT JOIN
+        goods g ON go.goods_id = g.id
+        LEFT JOIN
+        user b ON go.buyer_id = b.id LEFT JOIN
+        user s ON go.seller_id = s.id
+        <where>
+            <if test="goodsName != null and goodsName != ''">
+                AND g.title LIKE CONCAT('%', #{goodsName}, '%')
+            </if>
+            <if test="buyerName != null and buyerName != ''">
+                AND b.nickname LIKE CONCAT('%', #{buyerName}, '%')
+            </if>
+            <if test="sellerName != null and sellerName != ''">
+                AND s.nickname LIKE CONCAT('%', #{sellerName}, '%')
+            </if>
+            <if test="status != null">
+                AND go.status = #{status}
+            </if>
+        </where>
+        ORDER BY go.create_time DESC
+    </select>
+
+    <resultMap id="GoodsOrderDetailResultMap" type="com.qingqing.common.dto.admin.goods_order.GoodsOrderDTO">
+        <id property="id" column="go_id"/>
+        <result property="dealPrice" column="go_deal_price"/>
+        <result property="status" column="go_status"/>
+        <result property="dealTime" column="go_create_time"/>
+        <result property="updateTime" column="go_update_time"/>
+
+        <result property="buyerNickname" column="buyer_nickname"/>
+        <result property="buyerPhone" column="buyer_phone"/>
+        <result property="buyerAddress" column="buyer_address"/>
+
+        <result property="sellerNickname" column="seller_nickname"/>
+        <result property="sellerPhone" column="seller_phone"/>
+        <result property="sellerAddress" column="seller_address"/>
+
+        <result property="goodsName" column="goods_name"/>
+        <result property="goodsPrice" column="goods_price"/>
+        <result property="goodsImage" column="goods_image"/>
+        <result property="goodsDescription" column="goods_description"/>
+    </resultMap>
+
+    <select id="selectGoodsOrderDetailById" resultMap="GoodsOrderDetailResultMap">
+        SELECT go.id          AS go_id,
+               go.price       AS go_deal_price,
+               go.status      AS go_status,
+               go.create_time AS go_create_time,
+               go.update_time AS go_update_time,
+               bu.nickname    AS buyer_nickname,
+               bu.phone       AS buyer_phone,
+               bu.address     AS buyer_address,
+               su.nickname    AS seller_nickname,
+               su.phone       AS seller_phone,
+               su.address     AS seller_address,
+               g.title        AS goods_name,
+               g.price        AS goods_price,
+               g.images       AS goods_image,
+               g.description  AS goods_description
+        FROM goods_order go
+        JOIN
+            `user` bu
+        ON go.buyer_id = bu.id
+            JOIN
+            `user` su ON go.seller_id = su.id
+            JOIN
+            goods g ON go.goods_id = g.id
+        WHERE
+            go.id = #{id}
+    </select>
+
+
+</mapper>

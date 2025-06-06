@@ -1,0 +1,77 @@
+qingqing:
+  jwt:
+    # 新增用户密钥配置
+    user-secret-key: qingqing_user_secret_2025_key_v2 # 使用用户密钥
+    user-ttl: 259200000 # 例如，用户token可以设置更长的过期时间
+    user-token-name: token # 如果用户和管理员使用相同的token名称，可以不重复定义
+spring:
+  datasource:
+    # 数据库连接 URL
+    url: jdbc:mysql://localhost:3306/service_system?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&useSSL=false
+    # 数据库用户名
+    username: root
+    # 数据库密码
+    password: root
+    # 数据库驱动
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 使用 Druid 连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+# qingqing-user/src/main/resources/application.yml
+  servlet:
+    multipart:
+      max-file-size: 10MB       # 单个文件最大值
+      max-request-size: 100MB   # 单次请求最大值
+  web:
+    resources:
+      # 静态资源映射：将 /imgs/ 开头的请求映射到 G:/qingqing-community-imgs/
+      # 注意：classpath:/static/ 仍然保留，用于访问你项目内部的静态资源
+      static-locations: "classpath:/static/,file:G:/qingqing-community-imgs/"
+app:
+  upload:
+    # 统一的本地存储路径，直接指向 G:\qingqing-community-imgs
+    base-path: "G:/qingqing-community-imgs/"
+    # 图片的Web访问前缀，前端将通过这个前缀拼接文件名来访问图片
+    # 建议统一一个前缀，例如 /imgs/，方便管理
+    web-prefix: "/imgs/"
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml # Mybatis-Plus Mapper XML 文件位置
+  global-config:
+    db-config:
+      id-type: auto # 主键生成策略
+      logic-delete-field: deleted # 逻辑删除字段
+      logic-delete-value: 1 # 逻辑删除值
+      logic-not-delete-value: 0 # 逻辑未删除值
+  configuration:
+    map-underscore-to-camel-case: true # 开启驼峰命名转换
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印 SQL 日志 (开发环境建议开启，生产环境慎用)
+
+# Druid 连接池配置 (可选，根据需求调整)
+druid:
+  stat-view-servlet:
+    enabled: true
+    url-pattern: /druid/*
+    reset-enable: true
+    login-username: admin
+    login-password: 123
+  web-stat-filter:
+    enabled: true
+    url-pattern: /*
+    exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+knife4j:
+  enable: true # 启用 Knife4j
+  setting:
+    language: zh-CN # 设置为中文
+    enable-swagger-manage: true
+  # 明确为不同的API分组进行配置
+  openapi:
+    # 用户端 API 配置
+    user:
+      title: 青青社区用户端API文档
+      description: 青青校园社区用户端模块的API文档
+      version: 1.0
+      group:
+        default:
+          group-name: 用户端
+          api-base-package: com.qingqing.user.controller # 指定用户端 Controller 包路径
+server:
+  port: 9999

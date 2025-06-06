@@ -11,7 +11,6 @@ import lombok.Data;
  * @author wyr on 2025/6/2
  */
 @Data
-@Builder
 @ApiModel ("管理员登录VO")
 public class AdminLoginVO {
 

@@ -3,7 +3,7 @@ package com.qingqing.admin.controller;
 
 import com.qingqing.admin.service.AdminService;
 import com.qingqing.common.constants.JwtClaimsConstant;
-import com.qingqing.common.constants.JwtProperties;
+import com.qingqing.common.config.JwtProperties;
 import com.qingqing.common.dto.PageDTO;
 import com.qingqing.common.dto.admin.*;
 import com.qingqing.common.entity.Admin;
@@ -52,22 +52,20 @@ public class AdminController {
         log.info("员工登录：{}", adminLoginDto);
         Admin admin = adminService.login(adminLoginDto);
 
-        //登录成功后，生成jwt令牌
+        // 登录成功后,生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.EMP_ID, admin.getId());
+        // 管理员使用ADMIN_ID
+        claims.put(JwtClaimsConstant.ADMIN_ID, admin.getId());
         String token = JwtUtil.createJWT(
                 jwtProperties.getAdminSecretKey(),
                 jwtProperties.getAdminTtl(),
                 claims);
-        // 构建返回的登录信息
-        AdminLoginVO employeeLoginVO = AdminLoginVO.builder()
-                .id(admin.getId())
-                .userName(admin.getUsername())
-                .role(admin.getRole())
-                .token(token)
-                .build();
-
-        return JsonVO.success(employeeLoginVO);
+        AdminLoginVO loginVO = new AdminLoginVO();
+        loginVO.setId(admin.getId());
+        loginVO.setToken(token);
+        loginVO.setRole(admin.getRole());
+        loginVO.setUserName(admin.getUsername());
+        return JsonVO.success(loginVO, "登录成功");
     }
 
     /**
@@ -133,10 +131,10 @@ public class AdminController {
     @SecurityRequirement(name = "Authorization")
     public JsonVO<String> deleteAdmin(@PathVariable Long id) {
         log.info("删除管理员，ID：{}", id);
-//        // 调用服务层方法删除管理员
-//        if (BaseContext.getCurrentId().equals(id)){
-//            return JsonVO.fail("不能删除当前登录的管理员");
-//        }
+        // 调用服务层方法删除管理员
+        if (BaseContext.getCurrentId().equals(id)){
+            return JsonVO.fail("不能删除当前登录的管理员");
+        }
         adminService.removeById(id);
         return JsonVO.success("管理员删除成功");
     }
