@@ -48,7 +48,7 @@ public class AdminController {
      */
     @ApiOperation("管理员登录")
     @PostMapping("/login")
-    public JsonVO<AdminLoginVO> login(@RequestBody AdminLoginDto adminLoginDto) {
+    public JsonVO<AdminLoginVO> login(@Validated @RequestBody AdminLoginDto adminLoginDto) {
         log.info("员工登录：{}", adminLoginDto);
         Admin admin = adminService.login(adminLoginDto);
 
@@ -75,7 +75,7 @@ public class AdminController {
      */
     @ApiOperation("修改密码")
     @PutMapping("/change-password")
-    public JsonVO<String> updatePassword(@RequestBody UpdatePWDTO updatePWDTO) {
+    public JsonVO<String> updatePassword(@Validated @RequestBody UpdatePWDTO updatePWDTO) {
         log.info("修改密码：{}", updatePWDTO);
         // 调用服务层方法更新密码
         adminService.updatePassword(updatePWDTO);
@@ -113,7 +113,7 @@ public class AdminController {
      */
     @ApiOperation("添加管理员")
     @PostMapping("/add")
-    public JsonVO<Long> addAdmin(@RequestBody AdminAddDTO adminAddDTO) {
+    public JsonVO<Long> addAdmin(@Validated @RequestBody AdminAddDTO adminAddDTO) {
         log.info("添加管理员：{}", adminAddDTO);
         // 调用服务层方法添加管理员
         Long adminId = adminService.addAdmin(adminAddDTO);
@@ -146,7 +146,7 @@ public class AdminController {
      */
     @PutMapping("/update")
     @ApiOperation("更新管理员信息")
-   public JsonVO<String> updateAdmin(@RequestBody AdminUpdateDTO adminUpdateDTO){
+   public JsonVO<String> updateAdmin(@Validated @RequestBody AdminUpdateDTO adminUpdateDTO){
         log.info("更新管理员信息:{}", adminUpdateDTO);
         // 调用服务层方法更新管理员信息
         adminService.updateAdmin(adminUpdateDTO);
