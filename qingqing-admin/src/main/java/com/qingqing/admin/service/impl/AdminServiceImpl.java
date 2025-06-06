@@ -92,7 +92,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         // 2. 验证旧密码是否正确
         if (!oldPassword.equals(admin.getPassword())) {
             // 旧密码错误
-            throw new PasswordErrorException(MessageConstant.PASSWORD_ERROR);
+            throw new PasswordErrorException("密码错误");
         }
         // 3. 更新密码
         newPassword = DigestUtils.md5DigestAsHex(newPassword.getBytes());
@@ -101,7 +101,7 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
         int rows = adminMapper.updateById(admin);
         if (rows == 0){
             // 更新失败，可能是因为管理员不存在或其他原因
-            throw new AccountNotFoundException(MessageConstant.UNKNOWN_ERROR);
+            throw new AccountNotFoundException("未知原因，密码更新失败");
         }
     }
 
@@ -124,7 +124,9 @@ public class AdminServiceImpl extends ServiceImpl<AdminMapper, Admin> implements
 
         // 1. 执行 MyBatis-Plus 分页查询
         Page<Admin> resultPage = adminMapper.selectPage(page, queryWrapper);
-
+        if(resultPage.getTotal() == 0){
+            throw new BaseException("没有查询到数据");
+        }
         // 2. 将查询结果 Page<Admin> 转换为 PageDTO<AdminDTO>
         PageDTO<AdminDTO> pageDTO = new PageDTO<>();
         pageDTO.setPageIndex(resultPage.getCurrent());

@@ -101,7 +101,7 @@ public class AdminController {
      */
     @ApiOperation("查询管理员列表（条件+分页）")
     @GetMapping("/query-all")
-    public JsonVO<PageDTO<AdminDTO>> queryAdmin(AdminQuery adminQuery){
+    public JsonVO<PageDTO<AdminDTO>> queryAdmin(@Validated AdminQuery adminQuery){
         PageDTO<AdminDTO> list = adminService.queryAll(adminQuery);
         return JsonVO.success(list, "管理员列表查询成功");
     }
@@ -117,7 +117,7 @@ public class AdminController {
         log.info("添加管理员：{}", adminAddDTO);
         // 调用服务层方法添加管理员
         Long adminId = adminService.addAdmin(adminAddDTO);
-        return JsonVO.success(adminId, "管理员添加成功");
+        return JsonVO.success(adminId, "管理员添加成功，返回管理员Id");
 
     }
 
@@ -131,6 +131,9 @@ public class AdminController {
     @SecurityRequirement(name = "Authorization")
     public JsonVO<String> deleteAdmin(@PathVariable Long id) {
         log.info("删除管理员，ID：{}", id);
+        if (id == null){
+            return JsonVO.fail("参数错误, id不能为空");
+        }
         // 调用服务层方法删除管理员
         if (BaseContext.getCurrentId().equals(id)){
             return JsonVO.fail("不能删除当前登录的管理员");

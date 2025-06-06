@@ -10,8 +10,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -83,7 +86,22 @@ public class GlobalExceptionHandler {
         // 这里假设您的 JsonVO.fail(Object data, Integer code, String message) 方法
         return JsonVO.fail(errorMessage);
     }
+    /**
+     * 处理 @Validated 注解在普通参数（非 @RequestBody）上的校验失败异常
+     */
+    @ExceptionHandler(ConstraintViolationException.class)
+    public JsonVO<Void> handleConstraintViolationException(ConstraintViolationException e) {
+        Set<ConstraintViolation<?>> violations = e.getConstraintViolations();
+        List<String> errorMessages = violations.stream()
+                .map(ConstraintViolation::getMessage)
+                .collect(Collectors.toList());
 
+        String errorMessage = "参数校验失败: " + String.join(", ", errorMessages);
+        log.warn("URL 参数校验失败：{}", errorMessage);
+
+        // 返回统一的 JsonVO 响应
+        return JsonVO.fail(errorMessage); // 同样返回 400 Bad Request
+    }
     /**
      * 捕获所有其他未被特定处理的异常
      * 这是一个“万能”的异常处理器，用于捕获所有其他未明确处理的 RuntimeException。
