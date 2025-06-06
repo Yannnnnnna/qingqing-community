@@ -57,7 +57,7 @@ public class MessageController {
     @PostMapping("/send")
     public JsonVO<List<MessageVO>> sendMessage(
             @ApiParam(value = "消息发送请求", required = true)
-            @RequestBody @Valid MessageSendDTO messageSendDTO) {
+            @RequestBody @Validated MessageSendDTO messageSendDTO) {
 
         Long currentUserId = BaseContext.getCurrentId();
         messageSendDTO.setSenderId(currentUserId);

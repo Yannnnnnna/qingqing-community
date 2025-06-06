@@ -4,24 +4,18 @@ package com.qingqing.user.controller;
 
 
 import com.qingqing.common.dto.user.GoodsDTO;
-
 import com.qingqing.common.dto.user.SecondHandGoodsPublishDTO;
-
 import com.qingqing.common.query.user.GoodsQuery;
 import com.qingqing.common.vo.JsonVO;
 import com.qingqing.common.vo.user.SecondHandGoodsDetailVO;
 import com.qingqing.user.service.GoodsService;
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -46,8 +40,11 @@ public class GoodsController {
      */
     @ApiOperation("获取二手商品列表（条件）")
     @GetMapping("/query-all")
-    public JsonVO<List<GoodsDTO>> queryAll(GoodsQuery goodsQuery){
+    public JsonVO<List<GoodsDTO>> queryAll(@Validated GoodsQuery goodsQuery){
         List<GoodsDTO> list = goodsService.queryAll(goodsQuery);
+        if (list == null || list.isEmpty()) {
+            return JsonVO.fail("查询失败，没有符合条件的商品");
+        }
         return JsonVO.success(list, "商品列表查询成功");
 
     }
@@ -57,6 +54,9 @@ public class GoodsController {
     @ApiOperation("获取单个二手商品详细")
     @GetMapping("/{id}")
     public JsonVO<SecondHandGoodsDetailVO> query(@PathVariable("id") Long id){
+        if(id == null || id <= 0) {
+            return JsonVO.fail("商品ID无效");
+        }
         SecondHandGoodsDetailVO goodsDetailVO = goodsService.queryById(id);
         if (goodsDetailVO == null) {
             return JsonVO.fail("商品不存在");
@@ -69,8 +69,8 @@ public class GoodsController {
      */
     @ApiOperation("发布二手商品")
     @PostMapping("/publish")
-    public JsonVO<String> publish(@RequestBody SecondHandGoodsPublishDTO goodsDTO){
-        // ... 校验 DTO 参数 ...
+    public JsonVO<String> publish(@Validated @RequestBody SecondHandGoodsPublishDTO goodsDTO){
+
         try {
             // publishDTO.getImageUrls() 此时已经是前端传来的本地可访问URL列表
             goodsService.publishSecondHandGoods(goodsDTO); // 这个方法现在只负责业务逻辑和数据库保存

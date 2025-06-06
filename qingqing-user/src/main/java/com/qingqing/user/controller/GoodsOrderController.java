@@ -15,6 +15,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +44,7 @@ public class GoodsOrderController {
      */
     @ApiOperation("购买商品（创建订单）")
     @PostMapping("/buy")
-    public JsonVO<Long> buyGoods(@Valid @RequestBody BuyGoodsDTO buyDTO) {
+    public JsonVO<Long> buyGoods(@Validated @RequestBody BuyGoodsDTO buyDTO) {
         try {
             // 从JWT令牌中获取买家ID
             Long buyerId = BaseContext.getCurrentId();
@@ -120,7 +121,7 @@ public class GoodsOrderController {
      */
     @ApiOperation("修改订单状态")
     @PutMapping("/status")
-    public JsonVO<String> updateOrderStatus(@Valid @RequestBody UpdateOrderStatusDTO updateDTO) {
+    public JsonVO<String> updateOrderStatus(@Validated @RequestBody UpdateOrderStatusDTO updateDTO) {
         try {
             Long currentUserId =  BaseContext.getCurrentId();
             goodsOrderService.updateOrderStatus(updateDTO, currentUserId);

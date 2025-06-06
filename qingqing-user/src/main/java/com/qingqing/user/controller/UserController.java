@@ -11,7 +11,6 @@ import com.qingqing.common.entity.User;
 import com.qingqing.common.utils.BaseContext;
 import com.qingqing.common.utils.JwtUtil;
 import com.qingqing.common.vo.JsonVO;
-import com.qingqing.common.vo.admin.AdminLoginVO;
 import com.qingqing.common.vo.user.UserLoginVO;
 import com.qingqing.common.vo.user.UserProfileVO;
 import com.qingqing.user.service.UserService;
@@ -19,6 +18,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -50,7 +50,7 @@ public class UserController {
      */
     @ApiOperation("用户登录")
     @PostMapping("/login")
-    public JsonVO<UserLoginVO> login(@RequestBody UserLoginDTO userLoginDto) { // 建议把adminLoginDto改为userLoginDto，以保持语义一致
+    public JsonVO<UserLoginVO> login(@Validated @RequestBody UserLoginDTO userLoginDto) { // 建议把adminLoginDto改为userLoginDto，以保持语义一致
         log.info("用户登录：{}", userLoginDto);
         User user = userService.login(userLoginDto);
 
@@ -79,7 +79,7 @@ public class UserController {
      */
     @ApiOperation("修改密码")
     @PutMapping("/change-password")
-    public JsonVO<String> updatePassword(@RequestBody UserChangePasswordDTO dto) {
+    public JsonVO<String> updatePassword(@Validated @RequestBody UserChangePasswordDTO dto) {
         log.info("修改密码：{}", dto);
         // 调用服务层方法更新密码
         userService.updatePassword(dto);
@@ -90,7 +90,7 @@ public class UserController {
      */
     @ApiOperation("用户注册")
     @PostMapping("/register")
-    public JsonVO<Long> register(@RequestBody UserRegisterDTO dto) {
+    public JsonVO<Long> register(@Validated @RequestBody UserRegisterDTO dto) {
         log.info("用户注册：{}", dto);
         // 调用服务层方法进行注册
         Long id = userService.register(dto);
@@ -115,6 +115,10 @@ public class UserController {
     @GetMapping("/profile/get/{id}")
     @ApiOperation("获取用户详细")
     public JsonVO<UserProfileVO> query(@PathVariable("id") Long id) {
+        log.info("查询用户信息，用户ID：{}", id);
+        if(id == null || id <= 0) {
+            return JsonVO.fail("用户ID无效");
+        }
         UserProfileVO user =  userService.queryById(id);
         if (user == null) {
             return JsonVO.fail("用户不存在");
@@ -129,7 +133,7 @@ public class UserController {
     @ApiOperation("上传头像")
     @PostMapping("/profile/avatar")
     public JsonVO<String> uploadAvatar(@RequestPart  MultipartFile file) {
-        // 实际开发中，这里需要从安全上下文中获取当前用户ID
+        // 获取当前用户ID
         Long currentUserId = BaseContext.getCurrentId();
         try {
             String avatarUrl = userService.uploadUserAvatar(file, currentUserId);
@@ -147,7 +151,7 @@ public class UserController {
      */
     @ApiOperation("更改用户信息")
     @PutMapping("/profile/update")
-    public JsonVO<String> update(@RequestBody UserProfileUpdateDTO dto) {
+    public JsonVO<String> update(@Validated @RequestBody UserProfileUpdateDTO dto) {
         log.info("更新用户信息：{}", dto);
         userService.updateProfile(dto);
         return JsonVO.success("用户信息更新成功");

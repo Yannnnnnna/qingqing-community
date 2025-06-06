@@ -152,7 +152,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                 dto.setPublisherName("未知");
             }
 
-            // *** 修改1: 使用JsonUtils工具类处理图片JSON转换 ***
+            // 使用JsonUtils工具类处理图片JSON转换
             String imagesJson = goods.getImages();
             System.out.println("商品ID: " + goods.getId() + ", images JSON: " + imagesJson);
 
@@ -200,7 +200,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         vo.setDescription(goods.getDescription());
         vo.setPrice(goods.getPrice());
 
-        // *** 修改2: 使用JsonUtils工具类处理图片列表 ***
+        // 使用JsonUtils工具类处理图片列表
         if (goods.getImages() != null && !goods.getImages().isEmpty()) {
             List<String> imageUrls = JsonUtils.parseJsonToStringList(goods.getImages());
             vo.setImageUrls(imageUrls);
@@ -326,7 +326,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
             // 设置状态描述
             vo.setStatusDesc(getStatusDescription(goods.getStatus()));
 
-            // *** 修改4: 使用JsonUtils工具类获取封面图片 ***
+            // 使用JsonUtils工具类获取封面图片
             String coverImage = JsonUtils.getFirstImageFromJson(goods.getImages());
             vo.setCoverImage(coverImage);
 

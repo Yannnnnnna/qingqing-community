@@ -174,7 +174,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
         if ( user == null) {
             //账号不存在, 被全局异常捕获器捕获
-            throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
+            throw new AccountNotFoundException("登录失败，用户不存在");
         }
 
         //密码比对

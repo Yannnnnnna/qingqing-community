@@ -9,6 +9,7 @@ import com.qingqing.common.dto.admin.category.CategoryAddDTO;
 import com.qingqing.common.dto.admin.category.CategoryPageDTO;
 import com.qingqing.common.dto.admin.category.CategoryUpdateDTO;
 import com.qingqing.common.entity.Category;
+import com.qingqing.common.exception.BaseException;
 import com.qingqing.common.query.admin.CategoryPageQuery;
 import com.qingqing.common.vo.user.CategoryVO;
 import com.qingqing.user.mapper.CategoryMapper;
@@ -53,7 +54,9 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         // 或者更简洁的写法 (推荐，如果只查询一个字段，Mybatis-Plus可以直接返回List<String>)
          List<String> categoryNames = this.listObjs(wrapper.select(Category::getName), Object::toString);
         // 但通常 stream().map() 更通用和清晰
-
+        if(categoryNames == null || categoryNames.isEmpty()) {
+            throw new BaseException("查找失败，没有查询到任何商品类别名称");
+        }
         return categoryNames;
     }
 
