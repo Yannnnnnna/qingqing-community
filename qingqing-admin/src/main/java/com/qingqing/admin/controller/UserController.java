@@ -13,6 +13,7 @@ import com.qingqing.common.vo.JsonVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -35,7 +36,7 @@ public class UserController {
      */
     @GetMapping("/query-all")
     @ApiOperation("获取用户列表（条件+分页）")
-    public JsonVO<PageDTO<UsersPageDTO>> queryAll(UserPageQuery query) {
+    public JsonVO<PageDTO<UsersPageDTO>> queryAll(@Validated UserPageQuery query) {
         PageDTO<UsersPageDTO> list = userService.queryAll(query);
         return JsonVO.success(list, "管理员列表查询成功");
     }
@@ -57,7 +58,7 @@ public class UserController {
      */
     @PutMapping("/update-status")
     @ApiOperation("修改状态")
-    public JsonVO<String> updateStatus(@RequestBody UpdateUsersStatusDTO dto) {
+    public JsonVO<String> updateStatus(@Validated @RequestBody UpdateUsersStatusDTO dto) {
         userService.updateStatus(dto);
         return JsonVO.success("修改状态成功");
     }

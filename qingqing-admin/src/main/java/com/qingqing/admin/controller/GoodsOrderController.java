@@ -12,6 +12,7 @@ import com.qingqing.common.vo.JsonVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -33,7 +34,7 @@ public class GoodsOrderController {
      */
     @ApiOperation("获取商品订单列表（条件+分页）")
     @GetMapping("/query-all")
-    public JsonVO<PageDTO<GoodsOrderPageDTO>> queryAll(GoodsOrderPageQuery goodsOrderPageQuery) {
+    public JsonVO<PageDTO<GoodsOrderPageDTO>> queryAll(@Validated GoodsOrderPageQuery goodsOrderPageQuery) {
         PageDTO<GoodsOrderPageDTO> pageDTO = goodsOrderService.queryAll(goodsOrderPageQuery);
         if (pageDTO == null || pageDTO.getRows() == null || pageDTO.getRows().isEmpty()) {
             return JsonVO.fail("没有查询到商品订单");
@@ -46,6 +47,9 @@ public class GoodsOrderController {
     @ApiOperation("获取单个商品订单详细")
     @GetMapping("/query/{id}")
     public JsonVO<GoodsOrderDTO> query(@PathVariable Long id) {
+        if (id == null) {
+            return JsonVO.fail("商品订单ID不能为空");
+        }
         GoodsOrderDTO goodsOrderDTO = goodsOrderService.queryById(id);
         if (goodsOrderDTO == null) {
             return JsonVO.fail("没有查询到商品订单");
@@ -57,7 +61,7 @@ public class GoodsOrderController {
      */
     @ApiOperation("修改商品订单状态")
     @PutMapping("/update-status")
-    public JsonVO<String> updateStatus(@RequestBody UpdateOrderStatus updateOrderStatus) {
+    public JsonVO<String> updateStatus(@Validated @RequestBody UpdateOrderStatus updateOrderStatus) {
         boolean isUpdated = goodsOrderService.updateOrderStatus(updateOrderStatus);
         if (!isUpdated) {
             return JsonVO.fail("修改商品订单状态失败");

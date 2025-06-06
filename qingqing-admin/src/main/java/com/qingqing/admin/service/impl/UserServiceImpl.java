@@ -60,7 +60,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 1. 执行 MyBatis-Plus 分页查询
         Page<User> resultPage = userMapper.selectPage(page, queryWrapper);
-
+        if (resultPage == null || resultPage.getRecords() == null){
+            throw new  BaseException("查询结果为空");
+        }
         // 2. 将查询结果 Page<Admin> 转换为 PageDTO<AdminDTO>
         PageDTO<UsersPageDTO> pageDTO = new PageDTO<>();
         pageDTO.setPageIndex(resultPage.getCurrent());

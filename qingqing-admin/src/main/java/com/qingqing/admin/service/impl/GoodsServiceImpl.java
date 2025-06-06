@@ -11,6 +11,7 @@ import com.qingqing.common.dto.admin.goods.GoodsDTO;
 import com.qingqing.common.dto.admin.goods.GoodsPageDTO;
 import com.qingqing.common.dto.admin.goods.UpdateGoodsStatusDTO;
 import com.qingqing.common.entity.Goods;
+import com.qingqing.common.exception.BaseException;
 import com.qingqing.common.query.admin.GoodsPageQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +49,9 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
                 goodsPageQuery.getTitle(),
                 goodsPageQuery.getStatus()
         );
-
+        if(goodsPage == null||  goodsPage.getRecords().isEmpty()){
+            throw  new BaseException("没有查询到数据");
+        }
         // 3. 将 Mybatis-Plus 的 IPage 结果转换为自定义的 PageDTO
         PageDTO<GoodsPageDTO> resultPageDTO = new PageDTO<>();
         resultPageDTO.setRows(goodsPage.getRecords()); // 设置查询到的数据列表
