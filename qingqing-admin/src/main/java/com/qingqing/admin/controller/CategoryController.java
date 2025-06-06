@@ -36,7 +36,7 @@ public class CategoryController {
      */
     @GetMapping("/query-all")
     @ApiOperation("获取商品类别列表（条件+分页）")
-    public JsonVO<PageDTO<CategoryPageDTO> > queryAll( CategoryPageQuery query) {
+    public JsonVO<PageDTO<CategoryPageDTO> > queryAll( @Validated CategoryPageQuery query) {
         PageDTO<CategoryPageDTO> page = categoryService.queryAll(query);
         if(page == null || page.getRows() == null || page.getRows().isEmpty()) {
             return JsonVO.fail("没有查询到商品类别");
@@ -51,7 +51,7 @@ public class CategoryController {
      */
     @PostMapping("/add")
     @ApiOperation("添加商品类别")
-    public JsonVO<Long> add(@RequestBody CategoryAddDTO dto) {
+    public JsonVO<Long> add(@RequestBody @Validated CategoryAddDTO dto) {
         Long id = categoryService.saveCategory(dto);
         return JsonVO.success(id, "商品类别添加成功");
     }
@@ -63,7 +63,7 @@ public class CategoryController {
      */
     @PutMapping("/update")
     @ApiOperation("修改商品类别")
-    public JsonVO<String> update(@RequestBody CategoryUpdateDTO dto) {
+    public JsonVO<String> update(@RequestBody @Validated CategoryUpdateDTO dto) {
         boolean updated = categoryService.updateCategory(dto);
         if (updated) {
             return JsonVO.success("商品类别修改成功");
@@ -80,6 +80,9 @@ public class CategoryController {
     @DeleteMapping("/delete/{id}")
     @ApiOperation("删除商品类别")
     public JsonVO<String> delete(@PathVariable("id") Long id) {
+        if (id == null){
+            return JsonVO.fail("商品类别删除失败，ID不存在");
+        }
         boolean result = categoryService.removeById(id);
         if (result) {
             return JsonVO.success("商品类别删除成功");
