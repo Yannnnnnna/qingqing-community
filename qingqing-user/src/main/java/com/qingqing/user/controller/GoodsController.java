@@ -6,6 +6,7 @@ package com.qingqing.user.controller;
 import com.qingqing.common.dto.user.GoodsDTO;
 import com.qingqing.common.dto.user.SecondHandGoodsPublishDTO;
 import com.qingqing.common.query.user.GoodsQuery;
+import com.qingqing.common.utils.BaseContext;
 import com.qingqing.common.vo.JsonVO;
 import com.qingqing.common.vo.user.SecondHandGoodsDetailVO;
 import com.qingqing.user.service.GoodsService;
@@ -73,7 +74,8 @@ public class GoodsController {
 
         try {
             // publishDTO.getImageUrls() 此时已经是前端传来的本地可访问URL列表
-            goodsService.publishSecondHandGoods(goodsDTO); // 这个方法现在只负责业务逻辑和数据库保存
+            Long userId = BaseContext.getCurrentId(); // 设置当前用户ID
+            goodsService.publishSecondHandGoods(goodsDTO, userId); // 这个方法现在只负责业务逻辑和数据库保存
             return JsonVO.success("商品发布成功");
         } catch (Exception e) {
             log.error("商品发布失败：{}", e.getMessage(), e);

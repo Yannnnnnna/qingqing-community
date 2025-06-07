@@ -212,12 +212,18 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
     }
 
     /**
-     * 通用的文件上传到本地方法
+     * 通用的文件上传到本地方法（修正版）
      *
      * @param file             要上传的 MultipartFile 文件
      * @param subDirectoryName 文件要保存的子目录名（例如 "avatars", "goods"）
      * @return 文件在服务器上的可访问URL
      */
+    @Value("${server.port:9999}")  // 修改默认端口为9999
+    private String serverPort;
+
+    @Value("${server.servlet.context-path:}")
+    private String contextPath;
+
     public String uploadFileToLocal(MultipartFile file, String subDirectoryName) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("上传文件不能为空");
@@ -237,17 +243,25 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         }
         String newFileName = UUID.randomUUID().toString() + fileExtension;
 
-        // 完整的文件本地路径 (G:\qingqing-community-imgs\goods\,uuid.jpg)
+        // 完整的文件本地路径
         Path filePath = Paths.get(targetDir.getAbsolutePath(), newFileName);
 
         // 保存文件到本地文件系统
         try {
             Files.copy(file.getInputStream(), filePath);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("文件保存失败: " + e.getMessage());
         }
 
-        // 生成前端可访问的URL (http://localhost:8080/imgs/goods/uuid.jpg)
+        // 方案1: 返回完整URL（如果前端需要完整URL）
+        // String baseUrl = "http://localhost:" + serverPort;
+        // if (contextPath != null && !contextPath.isEmpty()) {
+        //     baseUrl += contextPath;
+        // }
+        // return baseUrl + webPrefix + subDirectoryName + "/" + newFileName;
+
+        // 方案2: 返回相对路径（推荐，更灵活）
+        // 前端可以根据需要拼接完整URL: http://localhost:9999 + 相对路径
         return webPrefix + subDirectoryName + "/" + newFileName;
     }
 
@@ -257,12 +271,12 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
      * @param publishDTO 前端提交的商品发布DTO，其中 imageUrls 已经是前端上传后返回的URL列表
      * @return
      */
-    public void publishSecondHandGoods(SecondHandGoodsPublishDTO publishDTO) {
+    public void publishSecondHandGoods(SecondHandGoodsPublishDTO publishDTO, Long userId) {
         // 这里不再需要下载图片，因为图片已经通过单独的上传接口保存了
         Goods goods = new Goods();
 
         // 2. 设置发布者ID
-        goods.setUserId(publishDTO.getPublisherId()); // DTO的publisherId 对应 Goods的 userId
+        goods.setUserId(userId); // DTO的publisherId 对应 Goods的 userId
 
         // 3. 根据 categoryName 获取 categoryId
         // 这里需要根据你的实际业务逻辑和 CategoryMapper 来查询类别ID
@@ -279,7 +293,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         goods.setDescription(publishDTO.getDescription());
         goods.setPrice(publishDTO.getPrice());
 
-        // *** 修改3: 使用JsonUtils工具类处理图片URL列表转JSON ***
+        // 使用JsonUtils工具类处理图片URL列表转JSON
         // 直接使用前端提交的 imageUrls 列表，它们已经是本地服务器的URL
         String imagesJson = JsonUtils.convertStringListToJson(publishDTO.getImageUrls());
         goods.setImages(imagesJson);

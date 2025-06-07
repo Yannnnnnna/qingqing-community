@@ -50,7 +50,7 @@ public interface GoodsService extends IService<Goods> {
      * 发布二手商品
      * @param goodsDTO
      */
-    void publishSecondHandGoods(SecondHandGoodsPublishDTO goodsDTO);
+    void publishSecondHandGoods(SecondHandGoodsPublishDTO goodsDTO, Long userId);
 
     /**
      * 查询当前用户发布的二手商品列表

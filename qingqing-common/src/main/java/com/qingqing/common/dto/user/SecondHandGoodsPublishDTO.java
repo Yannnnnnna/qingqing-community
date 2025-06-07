@@ -15,8 +15,8 @@ import java.util.List;
 @ApiModel(value = "二手商品发布DTO")
 public class SecondHandGoodsPublishDTO {
 
-    @NotNull(message = "发布者ID不能为空")
-    private Long publisherId;
+//    @NotNull(message = "发布者ID不能为空")
+//    private Long publisherId;
 
     @ApiModelProperty(value = "商品分类名称", example = "家用电器", required = true)
     @NotBlank(message = "商品分类名称不能为空")

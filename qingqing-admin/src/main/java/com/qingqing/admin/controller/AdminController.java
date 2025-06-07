@@ -65,6 +65,9 @@ public class AdminController {
         loginVO.setToken(token);
         loginVO.setRole(admin.getRole());
         loginVO.setUserName(admin.getUsername());
+        loginVO.setStatus(admin.getStatus());
+        loginVO.setCreateTime(admin.getCreateTime());
+        loginVO.setUpdateTime(admin.getUpdateTime());
         return JsonVO.success(loginVO, "登录成功");
     }
 

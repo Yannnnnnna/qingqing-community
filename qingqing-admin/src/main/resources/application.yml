@@ -6,6 +6,7 @@ qingqing:
     admin-ttl: 7200000
     # 设置前端传递过来的令牌名称
     admin-token-name: token
+
 spring:
   datasource:
     # 数据库连接 URL
@@ -18,23 +19,19 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 使用 Druid 连接池
     type: com.alibaba.druid.pool.DruidDataSource
-# qingqing-admin/src/main/resources/application.yml
+
   servlet:
     multipart:
       max-file-size: 10MB       # 单个文件最大值
       max-request-size: 100MB   # 单次请求最大值
-    web:
-      resources:
-        # 静态资源映射：将 /imgs/ 开头的请求映射到 G:/qingqing-community-imgs/
-        # 注意：classpath:/static/ 仍然保留，用于访问你项目内部的静态资源
-        static-locations: "classpath:/static/,file:G:/qingqing-community-imgs/"
-    app:
-      upload:
-        # 统一的本地存储路径，直接指向 G:\qingqing-community-imgs
-        base-path: "G:/qingqing-community-imgs/"
-        # 图片的Web访问前缀，前端将通过这个前缀拼接文件名来访问图片
-        # 建议统一一个前缀，例如 /imgs/，方便管理
-        web-prefix: "/imgs/"
+
+# 应用自定义配置
+app:
+  upload:
+    # 统一的本地存储路径，与user模块保持一致
+    base-path: "G:/qingqing-community-imgs/"
+    # 图片的Web访问前缀，与user模块保持一致
+    web-prefix: "/imgs/"
 
 mybatis-plus:
   mapper-locations: classpath*:/mapper/**/*.xml # Mybatis-Plus Mapper XML 文件位置
@@ -46,9 +43,9 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值
   configuration:
     map-underscore-to-camel-case: true # 开启驼峰命名转换
-    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印 SQL 日志 (开发环境建议开启，生产环境慎用)
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl # 打印 SQL 日志
 
-# Druid 连接池配置 (可选，根据需求调整)
+# Druid 连接池配置
 druid:
   stat-view-servlet:
     enabled: true
@@ -60,6 +57,7 @@ druid:
     enabled: true
     url-pattern: /*
     exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*"
+
 knife4j:
   enable: true # 启用 Knife4j
   setting:
@@ -71,7 +69,8 @@ knife4j:
     version: 1.0 # API 版本
     group:
       default:
-        group-name: 默认 # 默认分组名称
-        api-base-package: com.qingqing.admin.controller # 指定要扫描的 Controller 包路径 (根据实际模块调整)
+        group-name: 后台管理 # 默认分组名称
+        api-base-package: com.qingqing.admin.controller # 指定要扫描的 Controller 包路径
+
 server:
   port: 8888
