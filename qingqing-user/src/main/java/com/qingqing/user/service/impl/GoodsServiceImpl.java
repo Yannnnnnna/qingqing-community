@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.qingqing.common.dto.user.GoodsDTO;
 import com.qingqing.common.dto.user.SecondHandGoodsPublishDTO;
+import com.qingqing.common.dto.user.SecondHandGoodsUpdateDTO;
 import com.qingqing.common.entity.Category;
 import com.qingqing.common.entity.Goods;
 import com.qingqing.common.entity.User;
@@ -199,6 +200,7 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
         vo.setTitle(goods.getTitle());
         vo.setDescription(goods.getDescription());
         vo.setPrice(goods.getPrice());
+        vo.setSellerId(goods.getUserId());
 
         // 使用JsonUtils工具类处理图片列表
         if (goods.getImages() != null && !goods.getImages().isEmpty()) {
@@ -223,7 +225,6 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
     @Value("${server.servlet.context-path:}")
     private String contextPath;
-
     public String uploadFileToLocal(MultipartFile file, String subDirectoryName) {
         if (file.isEmpty()) {
             throw new IllegalArgumentException("上传文件不能为空");
@@ -346,6 +347,103 @@ public class GoodsServiceImpl extends ServiceImpl<GoodsMapper, Goods> implements
 
             return vo;
         }).collect(Collectors.toList());
+    }
+
+   /**
+     * 获取我发布的所有商品
+     * @param id 用户ID
+     * @return 商品DTO列表
+     */
+    @Override
+    public List<GoodsDTO> queryMyAllGoods(Long id) {
+        // 参数校验
+        if (id == null) {
+            throw new IllegalArgumentException("用户ID不能为空");
+        }
+
+        // 查询用户发布的所有商品
+        LambdaQueryWrapper<Goods> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Goods::getUserId, id)
+               .orderByDesc(Goods::getCreateTime);
+        List<Goods> goodsList = goodsMapper.selectList(wrapper);
+
+        if (goodsList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 批量查询用户信息
+        User publisher = userMapper.selectById(id);
+        String publisherName = publisher != null ? publisher.getNickname() : "未知";
+
+        // 转换为DTO列表
+        return goodsList.stream().map(goods -> {
+            GoodsDTO dto = new GoodsDTO();
+            BeanUtils.copyProperties(goods, dto);
+            dto.setPublisherName(publisherName);
+
+            // 处理图片
+            String imagesJson = goods.getImages();
+            String firstImage = JsonUtils.getFirstImageFromJson(imagesJson);
+            dto.setImage(firstImage);
+
+            return dto;
+        }).collect(Collectors.toList());
+    }
+
+    /**
+     * 更新商品信息
+     * @param goodsDTO 更新商品的DTO
+     */
+    @Override
+    public void updateGoods(SecondHandGoodsUpdateDTO goodsDTO) {
+        // 参数校验
+        if (goodsDTO.getGoodsId() == null) {
+            throw new IllegalArgumentException("商品ID不能为空");
+        }
+
+        // 检查商品是否存在
+        Goods existingGoods = goodsMapper.selectById(goodsDTO.getGoodsId());
+        if (existingGoods == null) {
+            throw new RuntimeException("商品不存在");
+        }
+
+        // 处理分类信息
+        if (goodsDTO.getCategoryName() != null) {
+            Category category = categoryMapper.selectOne(
+                new LambdaQueryWrapper<Category>()
+                    .eq(Category::getName, goodsDTO.getCategoryName())
+            );
+            if (category == null) {
+                throw new RuntimeException("商品分类不存在: " + goodsDTO.getCategoryName());
+            }
+            existingGoods.setCategoryId(category.getId());
+        }
+
+        // 更新基本信息
+        if (goodsDTO.getTitle() != null) {
+            existingGoods.setTitle(goodsDTO.getTitle());
+        }
+        if (goodsDTO.getDescription() != null) {
+            existingGoods.setDescription(goodsDTO.getDescription());
+        }
+        if (goodsDTO.getPrice() != null) {
+            existingGoods.setPrice(goodsDTO.getPrice());
+        }
+        if (goodsDTO.getStatus() != null) {
+            existingGoods.setStatus(goodsDTO.getStatus());
+        }
+
+        // 处理图片URLs
+        if (goodsDTO.getImageUrls() != null && !goodsDTO.getImageUrls().isEmpty()) {
+            String imagesJson = JsonUtils.convertStringListToJson(goodsDTO.getImageUrls());
+            existingGoods.setImages(imagesJson);
+        }
+
+        // 执行更新
+        int rows = goodsMapper.updateById(existingGoods);
+        if (rows != 1) {
+            throw new RuntimeException("商品更新失败");
+        }
     }
 
     /**

@@ -30,6 +30,8 @@ public class GoodsDTO {
 
     @ApiModelProperty(value = "商品价格", example = "59.9")
     private BigDecimal price; // 商品价格
+    @ApiModelProperty(value = "商品状态", example = "1", notes = "0-待审核,1-已上架,2-已下架,3-已售出")
+    private Integer status;
 
 }
 

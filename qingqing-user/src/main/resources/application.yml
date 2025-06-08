@@ -23,6 +23,10 @@ spring:
     multipart:
       max-file-size: 10MB      # 单个文件最大值
       max-request-size: 100MB  # 单次请求最大值
+  jackson:
+    generator:
+      write-numbers-as-strings: true # 将数字类型转换为字符串，避免精度丢失
+
 
 # 应用自定义配置
 app:

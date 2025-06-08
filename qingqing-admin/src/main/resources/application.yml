@@ -19,7 +19,9 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     # 使用 Druid 连接池
     type: com.alibaba.druid.pool.DruidDataSource
-
+  jackson:
+    generator:
+      write-numbers-as-strings: true # 将数字类型转换为字符串，避免精度丢失
   servlet:
     multipart:
       max-file-size: 10MB       # 单个文件最大值

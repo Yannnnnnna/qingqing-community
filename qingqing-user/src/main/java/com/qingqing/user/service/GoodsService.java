@@ -7,6 +7,7 @@ import com.qingqing.common.dto.PageDTO;
 
 import com.qingqing.common.dto.user.GoodsDTO;
 import com.qingqing.common.dto.user.SecondHandGoodsPublishDTO;
+import com.qingqing.common.dto.user.SecondHandGoodsUpdateDTO;
 import com.qingqing.common.entity.Goods;
 import com.qingqing.common.query.admin.GoodsPageQuery;
 import com.qingqing.common.query.user.GoodsQuery;
@@ -58,4 +59,17 @@ public interface GoodsService extends IService<Goods> {
      * @return 我的商品列表
      */
     List<MySecondHandGoodsVO> queryMyGoods(Long userId);
+
+    /**
+     * 获取我发布的所有商品
+     * @param id
+     * @return
+     */
+    List<GoodsDTO> queryMyAllGoods(Long id);
+
+    /**
+     * 更新二手商品信息
+     * @param goodsDTO
+     */
+     void updateGoods(SecondHandGoodsUpdateDTO goodsDTO);
 }

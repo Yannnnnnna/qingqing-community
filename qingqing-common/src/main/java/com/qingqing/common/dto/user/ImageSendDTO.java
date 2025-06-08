@@ -2,7 +2,9 @@ package com.qingqing.common.dto.user;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
 import lombok.Data;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.constraints.NotNull;
@@ -19,11 +21,9 @@ public class ImageSendDTO {
     private Long goodsId;
 
     @ApiModelProperty("发送者ID")
-    @NotNull(message = "发送者ID不能为空")
     private Long senderId;
 
     @ApiModelProperty("接收者ID")
-    @NotNull(message = "接收者ID不能为空")
     private Long receiverId;
 
     @ApiModelProperty("图片文件（用于直接上传）")

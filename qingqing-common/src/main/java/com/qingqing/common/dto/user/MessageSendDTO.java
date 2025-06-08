@@ -19,7 +19,6 @@ public class MessageSendDTO {
     private Long goodsId;
 
     @ApiModelProperty(value = "发送者ID", required = true)
-    @NotNull(message = "发送者ID不能为空")
     private Long senderId;
 
     @ApiModelProperty(value = "接收者ID", required = true)

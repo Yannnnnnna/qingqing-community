@@ -15,6 +15,11 @@ import java.time.LocalDateTime;
 @Data
 public class UsersPageDTO {
     /**
+     * 用户ID
+     */
+    @ApiModelProperty(value = "用户ID", example = "123456789")
+    private Long id;
+    /**
      * 微信OpenID
      */
     @ApiModelProperty(value = "微信OpenID", example = "wx_open_id")

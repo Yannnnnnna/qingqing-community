@@ -101,29 +101,21 @@ public class MessageController {
      */
     @ApiOperation("发送图片消息")
     @PostMapping("/send/image")
-    public JsonVO<List<MessageVO>> sendImageMessage(
-            @ApiParam(value = "图片URL", required = true)
-            @RequestParam @NotNull String imageUrl,
-            @ApiParam(value = "商品ID", required = true)
-            @RequestParam @NotNull Long goodsId,
-            @ApiParam(value = "接收者ID", required = true)
-            @RequestParam @NotNull Long receiverId) {
+    public JsonVO<List<MessageVO>> sendImageMessage(@Validated @RequestBody ImageSendDTO imageSendDTO
+            ) {
 
         Long currentUserId = BaseContext.getCurrentId();
 
-        log.info("发送图片消息：发送者{}，接收者{}，商品ID：{}", currentUserId, receiverId, goodsId);
+        log.info("发送图片消息：发送者{}，接收者{}，商品ID：{}", currentUserId, imageSendDTO.getSenderId(), imageSendDTO.getGoodsId());
 
-        ImageSendDTO imageSendDTO = new ImageSendDTO();
-        imageSendDTO.setImageUrl(imageUrl);
-        imageSendDTO.setGoodsId(goodsId);
         imageSendDTO.setSenderId(currentUserId);
-        imageSendDTO.setReceiverId(receiverId);
+
 
         // 发送图片消息
         messageService.sendImageMessageWithUrl(imageSendDTO);
 
         // 返回当前商品和当前用户的所有消息记录
-        List<MessageVO> messages = messageService.getMessagesByGoodsIdAndUserId(goodsId, currentUserId);
+        List<MessageVO> messages = messageService.getMessagesByGoodsIdAndUserId(imageSendDTO.getGoodsId(), currentUserId);
 
         return JsonVO.success(messages);
     }

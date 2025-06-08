@@ -12,6 +12,8 @@ import java.util.List;
 public class SecondHandGoodsDetailVO {
     @ApiModelProperty(value = "商品ID", example = "1786543210987654322")
     private Long id;
+    @ApiModelProperty(value = "卖家ID", example = "1234567890123456789")
+    private Long sellerId;
     @ApiModelProperty(value = "商品图片列表", example = "[\"http://example.com/image1.jpg\", \"http://example.com/image2.jpg\"]")
     private List<String>  imageUrls;
     @ApiModelProperty(value = "商品标题", example = "二手手机出售")

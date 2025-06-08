@@ -40,7 +40,7 @@ public class GoodsPageQuery extends PageQuery {
     /**
      * 商品状态（可选，只能为 0, 1, 2, 3）
      */
-    @Pattern(regexp = "^(0|1|2|3)?$", message = "商品状态必须为0、1、2或3")
+//    @Pattern(regexp = "^(0|1|2|3)?$", message = "商品状态必须为0、1、2或3")
     @ApiModelProperty(value = "商品状态 (0: 未审核, 1: 审核通过, 2: 已下架, 3: 已售出)", example = "1")
     private Integer status;
 }

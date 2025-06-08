@@ -5,6 +5,7 @@ package com.qingqing.user.controller;
 
 import com.qingqing.common.dto.user.GoodsDTO;
 import com.qingqing.common.dto.user.SecondHandGoodsPublishDTO;
+import com.qingqing.common.dto.user.SecondHandGoodsUpdateDTO;
 import com.qingqing.common.query.user.GoodsQuery;
 import com.qingqing.common.utils.BaseContext;
 import com.qingqing.common.vo.JsonVO;
@@ -53,7 +54,7 @@ public class GoodsController {
      * 获取单个二手商品详细
      */
     @ApiOperation("获取单个二手商品详细")
-    @GetMapping("/{id}")
+    @GetMapping("/detail/{id}")
     public JsonVO<SecondHandGoodsDetailVO> query(@PathVariable("id") Long id){
         if(id == null || id <= 0) {
             return JsonVO.fail("商品ID无效");
@@ -63,6 +64,22 @@ public class GoodsController {
             return JsonVO.fail("商品不存在");
         }
         return JsonVO.success(goodsDetailVO, "商品查询成功");
+    }
+
+    /**
+     * 获取当前用户的二手商品列表
+     * @return
+     */
+    @ApiOperation("获取当前用户的二手商品列表")
+    @GetMapping("/my-goods")
+    public JsonVO<List<GoodsDTO>> queryMy(){
+       Long id = BaseContext.getCurrentId();
+        log.info("查询当前用户ID：{} 的二手商品列表", id);
+        List<GoodsDTO> list = goodsService.queryMyAllGoods(id);
+        if (list == null || list.isEmpty()) {
+            return JsonVO.fail("查询失败，没有符合条件的商品");
+        }
+        return JsonVO.success(list, "商品列表查询成功");
     }
     /**
      * 发布二手商品
@@ -106,6 +123,11 @@ public class GoodsController {
         }
     }
 
-
+    @ApiOperation("编辑二手商品信息")
+    @PutMapping("/edit")
+    public JsonVO<String> edit(@Validated @RequestBody SecondHandGoodsUpdateDTO goodsDTO){
+        goodsService.updateGoods(goodsDTO);
+        return JsonVO.success("商品修改成功");
+    }
 
 }

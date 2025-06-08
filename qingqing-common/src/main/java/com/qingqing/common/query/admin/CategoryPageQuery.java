@@ -26,7 +26,7 @@ public class CategoryPageQuery extends PageQuery {
     /**
      * 状态（可选，只能为0或1）
      */
-    @Pattern(regexp = "^(0|1)?$", message = "状态必须为0或1")
+//    @Pattern(regexp = "^(0|1)?$", message = "状态必须为0或1")
     @ApiModelProperty(value = "状态 (0-正常,1-禁用)", example = "1")
     private Integer status;
 }

@@ -40,7 +40,7 @@ public class GoodsOrderPageQuery extends PageQuery {
     /**
      * 订单状态（可选，只能为 0, 1, 2, 3, 4）
      */
-    @Pattern(regexp = "^(0|1|2|3|4)?$", message = "订单状态必须为0、1、2、3或4")
+//    @Pattern(regexp = "^(0|1|2|3|4)?$", message = "订单状态必须为0、1、2、3或4")
     @ApiModelProperty(value = "订单状态 (0-待支付,1-已支付,2-已发货,3-已完成,4-已取消)", example = "1")
     private Integer status;
 }
